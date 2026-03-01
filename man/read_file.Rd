@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_file.R
 \name{read_file}
 \alias{read_file}
-\title{Read a file}
+\title{Read Data Files}
 \usage{
 read_file(
   path = NULL,
@@ -11,11 +11,45 @@ read_file(
 )
 }
 \arguments{
-\item{path}{a string}
+\item{path}{A string specifying the file path. Must be a single existing file.}
+
+\item{type}{A character vector of supported file types. Allowed values are:
+"txt", "csv", "tsv", "rds", "fst", or "xlsx". Default includes all
+supported types. An error is raised if unsupported types are specified.}
+
+\item{...}{Additional arguments passed to the underlying read function:
+\itemize{
+\item For xlsx files: passed to \code{\link[readxl:read_excel]{readxl::read_xlsx()}}
+\item For other formats: ignored
+}}
 }
 \value{
-a table
+A data frame containing the file data.
 }
 \description{
-Read a file
+Reads data from various file formats (txt, csv, tsv, rds, fst, xlsx) with
+optimized settings for tabular data. Text-based formats (txt, csv, tsv) are
+read using \code{\link[data.table:fread]{data.table::fread()}} with multi-threading support.
+}
+\details{
+For text-based files (txt, csv, tsv), \code{\link[data.table:openmp-utils]{data.table::setDTthreads()}} is
+configured to use \code{detectCores() - 1} threads for improved performance.
+Empty strings are treated as \code{NA}.
+}
+\examples{
+\dontrun{
+  # Read a CSV file
+  df <- read_file("data.csv")
+
+  # Read an Excel file with specific sheet
+  df <- read_file("data.xlsx", sheet = "Sheet1")
+
+  # Read an RDS file
+  df <- read_file("data.rds")
+}
+
+}
+\seealso{
+\code{\link[data.table:fread]{data.table::fread()}} for CSV/TSV reading options
+\code{\link[readxl:read_excel]{readxl::read_xlsx()}} for Excel reading options
 }
