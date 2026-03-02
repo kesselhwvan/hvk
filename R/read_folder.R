@@ -62,7 +62,15 @@
 #' @export
 read_folder <- function(path = NULL, attach = FALSE, type = c("txt", "csv", "tsv", "rds", "fst", "xlsx"), ...){
 
-  stopifnot(length(path) == 1L, is.character(path), dir.exists(path))
+
+  stopifnot(
+    is.character(path),
+    length(path) == 1L,
+    !is.na(path),
+    nzchar(trimws(path)),
+    dir.exists(path)
+  )
+
   stopifnot(is.logical(attach), length(attach) == 1L, !is.na(attach))
   stopifnot(length(type) > 0L, is.character(type))
 

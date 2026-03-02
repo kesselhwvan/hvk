@@ -40,11 +40,11 @@
 #' @export
 read_file <- function(path = NULL, type = c("txt", "csv", "tsv", "rds", "fst", "xlsx"), ...){
 
-  stopifnot(length(path) == 1L, is.character(path), file.exists(path))
-  ext <- tools::file_ext(tolower(path))
-  supported <- c("txt", "csv", "tsv", "rds", "fst", "xlsx")
+  stopifnot(is.character(path), length(path) == 1L, !is.na(path), nzchar(trimws(path)), file.exists(path))
 
-  if (!all(type %in% supported)) cli::cli_abort(message = "Unsupported type provided")
+  ext <- tools::file_ext(tolower(path))
+
+  if (!all(type %in% c("txt", "csv", "tsv", "rds", "fst", "xlsx"))) cli::cli_abort(message = "Unsupported type provided")
 
   if (any(ext %in% c("txt", "csv", "tsv"))){
     data.table::setDTthreads(max(1L, parallel::detectCores() - 1L))
