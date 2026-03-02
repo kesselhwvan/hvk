@@ -17,8 +17,8 @@
 #' @returns A data frame containing the file data.
 #'
 #' @details
-#' For text-based files (txt, csv, tsv), [data.table::setDTthreads()] is
-#' configured to use `detectCores() - 1` threads for improved performance.
+#' For text-based files (txt, csv, tsv), [data.table::setDTthreads()] can be
+#' configured to use more threads for improved performance.
 #' Empty strings are treated as `NA`.
 #'
 #' @examples

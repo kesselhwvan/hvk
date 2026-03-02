@@ -32,8 +32,8 @@ optimized settings for tabular data. Text-based formats (txt, csv, tsv) are
 read using \code{\link[data.table:fread]{data.table::fread()}} with multi-threading support.
 }
 \details{
-For text-based files (txt, csv, tsv), \code{\link[data.table:openmp-utils]{data.table::setDTthreads()}} is
-configured to use \code{detectCores() - 1} threads for improved performance.
+For text-based files (txt, csv, tsv), \code{\link[data.table:openmp-utils]{data.table::setDTthreads()}} can be
+configured to use more threads for improved performance.
 Empty strings are treated as \code{NA}.
 }
 \examples{
