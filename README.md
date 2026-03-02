@@ -20,7 +20,8 @@ pak::pak("kesselhwvan/hvk")
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
-library(hvk)
-## basic example code
+if (requireNamespace("data.table", quietly = TRUE) && requireNamespace("parallel", quietly = TRUE)) {
+  data.table::setDTthreads(threads = max(1L, parallel::detectCores(logical = TRUE) - 1))
+}
 ```
 
