@@ -32,13 +32,13 @@ file_size <- function(path = NULL, unit = NULL){
   stopifnot(is.character(path), length(path) == 1L, !is.na(path), nzchar(trimws(path)), file.exists(path))
   u <- c("B","KB","MB","GB","TB","PB","EB", "ZB", "YB")
   bytes <- as.numeric(file.size(path))
-  if (!is.finite(bytes)) cli::cli_abort("Could not determine file size for {.path {path}}.")
+  if (!is.finite(bytes))  stop(sprintf("Could not determine file size for '%s'.", path), call. = FALSE)
 
   # Manual unit selection
   if (!is.null(unit)) {
     stopifnot(is.character(unit), length(unit) == 1L, !is.na(unit), nzchar(trimws(unit)))
     unit <- trimws(unit)
-    if (!unit %in% u) cli::cli_abort(c("Invalid unit: {.val {unit}}.", "Allowed units: {.val {paste(u, collapse = ', ')}}."))
+    if (!unit %in% u) stop(sprintf("Invalid unit: '%s'. Allowed units: %s.", unit, paste(u, collapse = ", ")),call. = FALSE)
     i <- match(unit, u)
     value <- bytes / 1000^(i - 1L)
     return(paste(format(value, trim = TRUE, scientific = FALSE), unit))

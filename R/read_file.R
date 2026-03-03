@@ -64,13 +64,16 @@ read_file <- function(path = NULL, type = c("txt", "csv", "tsv", "rds", "fst", "
   stopifnot(is.logical(clean_names),
             length(clean_names) == 1L,
             !is.na(clean_names))
-  # extension
-  ext <- tolower(tools::file_ext(path))
-  # read based on extension
-  if (ext %in% c("txt", "csv", "tsv")) obj <- data.table::fread(file = path, na.strings = "", data.table = FALSE)
-  if (ext == "rds") obj <- readRDS(file = path)
-  if (ext == "fst") obj <- fst::read_fst(path = path)
-  if (ext == "xlsx") obj <- readxl::read_xlsx(path = path, ...)
+  # read file
+  obj <- switch(
+    tolower(tools::file_ext(path)),
+    txt  = data.table::fread(file = path, na.strings = "", data.table = FALSE),
+    csv  = data.table::fread(file = path, na.strings = "", data.table = FALSE),
+    tsv  = data.table::fread(file = path, na.strings = "", data.table = FALSE),
+    rds  = readRDS(file = path),
+    fst  = fst::read_fst(path = path),
+    xlsx = readxl::read_xlsx(path = path, ...),
+    stop("Unsupported file extension"))
   # execute df_as_tibble
   if (inherits(obj, "data.frame") && isTRUE(df_as_tibble)) obj <- tibble::as_tibble(obj, rownames = if (tibble::has_rownames(obj)) "rowname" else NULL)
   # execute clean_names

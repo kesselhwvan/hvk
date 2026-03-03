@@ -1,10 +1,11 @@
 
-# hvk
+# vanKesselR
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of hvk is to ...
+The goal of vanKesselR is to provide lightweight utilities to increase
+    productivity by streamlining common, repetitive tasks.
 
 ## Installation
 
@@ -12,12 +13,12 @@ You can install the development version of hvk from [GitHub](https://github.com/
 
 ``` r
 # install.packages("pak")
-pak::pak("kesselhwvan/hvk")
+pak::pak("kesselhwvan/vanKesselR")
 ```
 
-## Example
+## setDTthreads
 
-This is a basic example which shows you how to solve a common problem:
+Conditionally configure the number of threads used by data.table
 
 ``` r
 if (requireNamespace("data.table", quietly = TRUE) && requireNamespace("parallel", quietly = TRUE)) {

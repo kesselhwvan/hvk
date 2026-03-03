@@ -1,23 +1,30 @@
-Package: hvk
-Title: What the Package Does (One Line, Title Case)
+Package: vanKesselR
+Title: Streamline Common Data Tasks to Increase Productivity
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+    person("Hugo", "van Kessel", , "hugovankessel@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-9794-6385"))
+Description: The package provides lightweight utilities to increase
+    productivity by streamlining common, repetitive tasks.
 License: MIT + file LICENSE
-Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
-Suggests: 
-    testthat (>= 3.0.0)
-Config/testthat/edition: 3
+Depends: 
+    R (>= 3.5)
 Imports: 
+    cli,
     data.table,
     fst,
+    glue,
     janitor,
+    lifecycle,
     parallel,
     purrr,
     readxl,
-    tibble
-Depends: 
-    R (>= 3.5)
+    rlang,
+    tibble,
+    withr
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
