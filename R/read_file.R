@@ -78,10 +78,11 @@ read_file <- function(path = NULL,
     fst  = fst::read_fst(path = path),
     xlsx = readxl::read_xlsx(path = path, ...),
     stop("Unsupported file extension"))
-  # execute df_as_tibble
-  if (inherits(obj, "data.frame") && isTRUE(df_as_tibble)) obj <- tibble::as_tibble(obj, rownames = if (tibble::has_rownames(obj)) "rowname" else NULL)
-  # execute clean_names
-  if (inherits(obj, "data.frame") && isTRUE(clean_names)) obj <- janitor::clean_names(obj)
+  # execute df_as_tibble and clean_names
+  if (inherits(obj, "data.frame")) {
+    if (isTRUE(df_as_tibble)) {obj <- tibble::as_tibble(obj,rownames = if (tibble::has_rownames(obj)) "rowname" else NULL)}
+    if (isTRUE(clean_names)) {obj <- janitor::clean_names(obj)}
+  }
   # return obj
   return(obj)
 }

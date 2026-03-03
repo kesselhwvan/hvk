@@ -81,12 +81,11 @@ read_folder <- function(path = NULL,
   obj <- purrr::map(.x = stats::setNames(object = name,
                                          nm = make.unique(tools::file_path_sans_ext(tolower(basename(name))), sep = "")),
                     .f = ~read_file(.x, type = type, df_as_tibble = df_as_tibble, clean_names = clean_names, ...))
-  # return obj
-  if (isTRUE(attach)){
-    list2env(x = obj,
-             envir = envir)
-    invisible(names(obj))
-  } else {
-    return(obj)
+  # execute attach
+  if (isTRUE(attach)) {
+    list2env(obj, envir = envir)
+    return(invisible(names(obj)))
   }
+  # return obj
+  return(obj)
 }
