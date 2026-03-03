@@ -10,7 +10,6 @@ License: MIT + file LICENSE
 Depends: 
     R (>= 3.5)
 Imports: 
-    cli,
     data.table,
     fst,
     glue,
@@ -20,8 +19,7 @@ Imports:
     purrr,
     readxl,
     rlang,
-    tibble,
-    withr
+    tibble
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
