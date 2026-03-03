@@ -43,7 +43,11 @@
 #' }
 #'
 #' @export
-read_file <- function(path = NULL, type = c("txt", "csv", "tsv", "rds", "fst", "xlsx"), df_as_tibble = TRUE, clean_names = TRUE, ...){
+read_file <- function(path = NULL,
+                      type = c("txt", "csv", "tsv", "rds", "fst", "xlsx"),
+                      df_as_tibble = TRUE,
+                      clean_names = TRUE,
+                      ...){
   # path
   stopifnot(is.character(path),
             length(path) == 1L,
