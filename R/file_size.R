@@ -1,51 +1,92 @@
-#' Format file size with SI decimal units
+#' Get Human-Readable File Size
 #'
-#' Computes the size of a file and formats the result using SI decimal units
-#' (base 1000). If `unit` is `NULL`, the function selects an appropriate unit
-#' automatically. If `unit` is supplied, it must match one of the supported
-#' unit strings exactly.
+#' Returns the size of a file in a human-readable format with automatic or
+#' manual unit selection (bytes, KB, MB, GB, etc.).
 #'
-#' @param path Character scalar. Path to an existing file.
-#' @param unit Character scalar or `NULL`. One of `"B"`, `"KB"`, `"MB"`, `"GB"`,
-#'   `"TB"`, `"PB"`, `"EB"`, `"ZB"`, `"YB"`. If `NULL`, the unit is chosen
-#'   automatically.
+#' @param path Character scalar. Path to the file. Must exist on disk.
+#' @param unit Character scalar. Optional unit for output. If \code{NULL} (default),
+#'   the most appropriate unit is chosen automatically. Allowed values:
+#'   \code{"B"}, \code{"KB"}, \code{"MB"}, \code{"GB"}, \code{"TB"}, \code{"PB"},
+#'   \code{"EB"}, \code{"ZB"}, \code{"YB"}.
 #'
-#' @return A character scalar of the form `"<value> <unit>"`, where `<value>` is
-#'   formatted in fixed notation.
+#' @return
+#' Character scalar. The file size formatted as a human-readable string
+#' (e.g., \code{"2.5 MB"}, \code{"1023 B"}).
 #'
 #' @details
-#' Units follow SI prefixes and use powers of 1000. This differs from IEC binary
-#' units (KiB, MiB, etc.), which use powers of 1024.
+#' File size is computed in bytes and converted to the requested unit using base 1000.
 #'
-#' Input validation uses `stopifnot()` for basic checks. Invalid `unit` values
-#' trigger `cli::cli_abort()` with a descriptive message.
+#' If \code{unit = NULL}, the smallest unit is chosen such that the value is
+#' at least 1000 (or 1 if the file is smaller than 1000 bytes).
 #'
 #' @examples
 #' \dontrun{
-#' file_size("iris.txt")
-#' file_size("iris.txt", unit = "MB")
+#' # Automatic unit selection
+#' file_size("data.csv")
+#'
+#' # Manual unit selection
+#' file_size("data.csv", unit = "KB")
+#' file_size("data.csv", unit = "B")
 #' }
 #'
 #' @export
-file_size <- function(path = NULL, unit = NULL){
+file_size <- function(path = NULL, unit = NULL) {
+  # Validate path
+  stopifnot(
+    is.character(path),
+    length(path) == 1L,
+    !is.na(path),
+    nzchar(trimws(path)),
+    file.exists(path)
+  )
 
-  stopifnot(is.character(path), length(path) == 1L, !is.na(path), nzchar(trimws(path)), file.exists(path))
-  u <- c("B","KB","MB","GB","TB","PB","EB", "ZB", "YB")
+  # Define unit hierarchy
+  units <- c("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+
+  # Get file size in bytes
   bytes <- as.numeric(file.size(path))
-  if (!is.finite(bytes))  stop(sprintf("Could not determine file size for '%s'.", path), call. = FALSE)
+
+  if (!is.finite(bytes)) {
+    stop(
+      sprintf("Could not determine file size for '%s'.", path),
+      call. = FALSE
+    )
+  }
 
   # Manual unit selection
   if (!is.null(unit)) {
-    stopifnot(is.character(unit), length(unit) == 1L, !is.na(unit), nzchar(trimws(unit)))
+    stopifnot(
+      is.character(unit),
+      length(unit) == 1L,
+      !is.na(unit),
+      nzchar(trimws(unit))
+    )
+
     unit <- trimws(unit)
-    if (!unit %in% u) stop(sprintf("Invalid unit: '%s'. Allowed units: %s.", unit, paste(u, collapse = ", ")),call. = FALSE)
-    i <- match(unit, u)
-    value <- bytes / 1000^(i - 1L)
+
+    if (!unit %in% units) {
+      stop(
+        sprintf(
+          "Invalid unit: '%s'. Allowed units: %s.",
+          unit,
+          paste(units, collapse = ", ")
+        ),
+        call. = FALSE
+      )
+    }
+
+    idx <- match(unit, units)
+    value <- bytes / 1000^(idx - 1L)
+
     return(paste(format(value, trim = TRUE, scientific = FALSE), unit))
   }
 
   # Automatic unit selection
-  i <- pmin(length(u), 1L + (bytes >= 1000) * floor(log(pmax(bytes, 1), 1000)))
-  value <- bytes / 1000^(i - 1L)
-  return(paste(format(value, trim = TRUE, scientific = FALSE), u[i]))
+  idx <- pmin(
+    length(units),
+    1L + (bytes >= 1000) * floor(log(pmax(bytes, 1), 1000))
+  )
+  value <- bytes / 1000^(idx - 1L)
+
+  paste(format(value, trim = TRUE, scientific = FALSE), units[idx])
 }

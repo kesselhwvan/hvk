@@ -2,38 +2,40 @@
 % Please edit documentation in R/file_size.R
 \name{file_size}
 \alias{file_size}
-\title{Format file size with SI decimal units}
+\title{Get Human-Readable File Size}
 \usage{
 file_size(path = NULL, unit = NULL)
 }
 \arguments{
-\item{path}{Character scalar. Path to an existing file.}
+\item{path}{Character scalar. Path to the file. Must exist on disk.}
 
-\item{unit}{Character scalar or \code{NULL}. One of \code{"B"}, \code{"KB"}, \code{"MB"}, \code{"GB"},
-\code{"TB"}, \code{"PB"}, \code{"EB"}, \code{"ZB"}, \code{"YB"}. If \code{NULL}, the unit is chosen
-automatically.}
+\item{unit}{Character scalar. Optional unit for output. If \code{NULL} (default),
+the most appropriate unit is chosen automatically. Allowed values:
+\code{"B"}, \code{"KB"}, \code{"MB"}, \code{"GB"}, \code{"TB"}, \code{"PB"},
+\code{"EB"}, \code{"ZB"}, \code{"YB"}.}
 }
 \value{
-A character scalar of the form \code{"<value> <unit>"}, where \verb{<value>} is
-formatted in fixed notation.
+Character scalar. The file size formatted as a human-readable string
+(e.g., \code{"2.5 MB"}, \code{"1023 B"}).
 }
 \description{
-Computes the size of a file and formats the result using SI decimal units
-(base 1000). If \code{unit} is \code{NULL}, the function selects an appropriate unit
-automatically. If \code{unit} is supplied, it must match one of the supported
-unit strings exactly.
+Returns the size of a file in a human-readable format with automatic or
+manual unit selection (bytes, KB, MB, GB, etc.).
 }
 \details{
-Units follow SI prefixes and use powers of 1000. This differs from IEC binary
-units (KiB, MiB, etc.), which use powers of 1024.
+File size is computed in bytes and converted to the requested unit using base 1000.
 
-Input validation uses \code{stopifnot()} for basic checks. Invalid \code{unit} values
-trigger \code{cli::cli_abort()} with a descriptive message.
+If \code{unit = NULL}, the smallest unit is chosen such that the value is
+at least 1000 (or 1 if the file is smaller than 1000 bytes).
 }
 \examples{
 \dontrun{
-file_size("iris.txt")
-file_size("iris.txt", unit = "MB")
+# Automatic unit selection
+file_size("data.csv")
+
+# Manual unit selection
+file_size("data.csv", unit = "KB")
+file_size("data.csv", unit = "B")
 }
 
 }

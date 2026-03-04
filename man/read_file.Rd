@@ -2,10 +2,10 @@
 % Please edit documentation in R/read_file.R
 \name{read_file}
 \alias{read_file}
-\title{Read a single file into R based on its extension}
+\title{Read a Single File into R}
 \usage{
 read_file(
-  path = NULL,
+  file = NULL,
   type = c("txt", "csv", "tsv", "rds", "fst", "xlsx"),
   df_as_tibble = TRUE,
   clean_names = TRUE,
@@ -13,45 +13,55 @@ read_file(
 )
 }
 \arguments{
-\item{path}{Character scalar. Path to an existing file.}
+\item{file}{Character scalar. Path to the file to read. Must exist on disk.}
 
-\item{type}{Character vector. Allowed file types (extensions). Supported values are
-\code{"txt"}, \code{"csv"}, \code{"tsv"}, \code{"rds"}, \code{"fst"}, \code{"xlsx"}.
-This parameter validates allowed extensions; the actual reader is chosen by the file's
-extension extracted from \code{path}.}
+\item{type}{Character vector. Supported file extensions: \code{"txt"}, \code{"csv"},
+\code{"tsv"}, \code{"rds"}, \code{"fst"}, or \code{"xlsx"}.
+File type is auto-detected via extension; this parameter is used for validation only.}
 
-\item{df_as_tibble}{Logical scalar. If \code{TRUE} and the imported object inherits from
-\code{"data.frame"}, converts it to a tibble via \code{tibble::as_tibble()}. If row names
-exist, they are preserved in a column named \code{"rowname"}.}
+\item{df_as_tibble}{Logical scalar. If \code{TRUE} (default), data frames are
+converted to tibbles via \code{tibble::as_tibble()}.}
 
-\item{clean_names}{Logical scalar. If \code{TRUE} and the imported object inherits from
-\code{"data.frame"}, cleans column names using \code{janitor::clean_names()}.}
+\item{clean_names}{Logical scalar. If \code{TRUE} (default), column names of
+data frames are cleaned via \code{janitor::clean_names()}.}
 
-\item{...}{Additional arguments forwarded to \code{readxl::read_xlsx()} when reading
-\code{.xlsx} files. Ignored for other file types.}
+\item{...}{Additional arguments passed to the underlying file reader.
+For example, \code{sheet} for Excel files via \code{readxl::read_xlsx()}.}
 }
 \value{
-An R object produced by the relevant file reader. For tabular inputs, this is typically a
-\code{data.frame} or tibble depending on \code{df_as_tibble}. For \code{.rds} it is the
-stored R object. For \code{.fst} it is the object returned by \code{fst::read_fst()}.
+An R object produced by the relevant file reader. For tabular inputs
+(\code{.txt}, \code{.csv}, \code{.tsv}, \code{.xlsx}), typically a
+\code{data.frame} or tibble. For \code{.rds}, the stored R object is returned.
+For \code{.fst}, a data frame is returned via \code{fst::read_fst()}.
 }
 \description{
-Reads a single file from disk and returns its contents. The file type is inferred from the
-filename extension. Tabular text files are read with \code{data.table::fread()}, RDS files
-with \code{readRDS()}, FST files with \code{fst::read_fst()}, and Excel files with
-\code{readxl::read_xlsx()}. Optional post-processing converts data frames to tibbles and
-optionally standardizes column names.
+Reads a single file from disk and returns the appropriate R object. Supports
+multiple file formats with automatic format detection via file extension.
 }
 \details{
-The function validates that \code{path} exists and that \code{type} is restricted to a known
-set of extensions. The read method is selected solely via \code{tools::file_ext(path)}.
-If \code{clean_names = TRUE}, column-name cleaning occurs after optional tibble conversion.
+The function reads the file extension from the filename (case-insensitive) and
+routes to the appropriate reader:
+\itemize{
+\item \code{txt}, \code{csv}, \code{tsv}: \code{data.table::fread()}
+\item \code{rds}: \code{base::readRDS()}
+\item \code{fst}: \code{fst::read_fst()}
+\item \code{xlsx}: \code{readxl::read_xlsx()}
+}
+
+When \code{df_as_tibble = TRUE}, tabular data is converted to a tibble
+(row names are preserved in a new column if present).
+When \code{clean_names = TRUE}, column names are cleaned after tibble conversion.
 }
 \examples{
 \dontrun{
+# Read CSV file as tibble
 d1 <- read_file("data/example.csv")
-d2 <- read_file("data/example.xlsx", sheet = 2)
-m  <- read_file("models/fit.rds", df_as_tibble = FALSE)
+
+# Read Excel sheet 2 without converting to tibble
+d2 <- read_file("data/example.xlsx", sheet = 2, df_as_tibble = FALSE)
+
+# Read RDS file without cleaning column names
+m <- read_file("models/fit.rds", clean_names = FALSE)
 }
 
 }

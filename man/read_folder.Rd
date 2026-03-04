@@ -2,12 +2,13 @@
 % Please edit documentation in R/read_folder.R
 \name{read_folder}
 \alias{read_folder}
-\title{Read multiple files from a folder into a named list (optionally attach to an environment)}
+\title{Read Multiple Files from a Directory (optionally recursively)}
 \usage{
 read_folder(
   path = NULL,
   attach = FALSE,
   type = c("txt", "csv", "tsv", "rds", "fst", "xlsx"),
+  recursive = FALSE,
   df_as_tibble = TRUE,
   clean_names = TRUE,
   envir = parent.frame(),
@@ -15,14 +16,16 @@ read_folder(
 )
 }
 \arguments{
-\item{path}{Character scalar. Path to an existing directory.}
+\item{path}{Character scalar. Path to a directory containing files to read.}
 
-\item{attach}{Logical scalar. If \code{TRUE}, assigns the imported objects into \code{envir}
-and returns the names invisibly. If \code{FALSE}, returns a named list.}
+\item{attach}{Logical scalar. If \code{TRUE}, objects are attached to the specified
+environment using \code{list2env()}. If \code{FALSE} (default), a named list is returned.}
 
-\item{type}{Character vector. File types (extensions) to include. Supported values are
-\code{"txt"}, \code{"csv"}, \code{"tsv"}, \code{"rds"}, \code{"fst"}, \code{"xlsx"}.
+\item{type}{Character vector. File extensions to detect. Defaults to
+\code{c("txt", "csv", "tsv", "rds", "fst", "xlsx")}.
 Matching is case-insensitive.}
+
+\item{recursive}{Logical scalar. Should search subfolders recursively? Default \code{FALSE}.}
 
 \item{df_as_tibble}{Logical scalar. Passed to \code{read_file()} to control whether data
 frames are returned as tibbles.}
@@ -40,24 +43,21 @@ If \code{attach = FALSE}, a named list of imported objects. If \code{attach = TR
 the character vector of object names is returned invisibly.
 }
 \description{
-Reads all files in a directory whose extensions match \code{type}. Each file is read via
-\code{read_file()} and returned as a named list. Names are derived from the lowercased
-base filename without extension, made unique if duplicates occur. Optionally assigns the
-objects into \code{envir} and returns the object names invisibly.
+Reads multiple files from a directory into R, returning a named list of objects
+or attaching them to an environment. Can search subfolders recursively.
 }
 \details{
-Files are detected with \code{list.files()} using a regular expression built from \code{type}.
-Object names are computed as \code{make.unique(file_path_sans_ext(tolower(basename(file))))}.
-The function errors if \code{path} is not a valid existing directory or if inputs fail
-basic type and length checks.
+When \code{recursive = TRUE}, the function searches all subdirectories for matching files.
+Object names are generated from basenames only (subdirectory structure is not included),
+and \code{make.unique()} is used to handle duplicate filenames across directories.
 }
 \examples{
 \dontrun{
+# Non-recursive (default, files in 'data' only):
 x <- read_folder("data", type = c("csv", "xlsx"))
-read_folder("data", attach = TRUE, envir = .GlobalEnv)
+
+# Recursive (files in 'data' and all subfolders):
+y <- read_folder("data", type = c("csv", "xlsx"), recursive = TRUE)
 }
 
-}
-\seealso{
-\code{\link[base]{list.files}}, \code{\link[base]{list2env}}
 }
