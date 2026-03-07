@@ -54,3 +54,6 @@ rsconnect/
 *.pdf
 *.txt
 
+.Rproj.user
+.DS_Store
+.quarto

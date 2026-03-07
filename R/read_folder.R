@@ -91,16 +91,13 @@ read_folder <- function(path = NULL,
   }
 
   # Read files with prepared names
-  obj <- purrr::map(
-    .x = stats::setNames(name, format_name(name = name)),
-    .f = ~read_file(
-      .x,
-      type = type,
-      df_as_tibble = df_as_tibble,
-      clean_names = clean_names,
-      ...
-    )
-  )
+  obj <- purrr::map(.x = stats::setNames(object = name,
+                                         nm = format_name(name = name)),
+                    .f = ~read_file(file = .x,
+                                    type = type,
+                                    df_as_tibble = df_as_tibble,
+                                    clean_names = clean_names,
+                                    ...))
 
   # Execute attach if requested
   if (isTRUE(attach)) {
